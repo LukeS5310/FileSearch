@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WinForms = System.Windows.Forms;
+using System.Collections.ObjectModel;
 
 namespace FileSearch
 {
@@ -21,6 +22,9 @@ namespace FileSearch
     /// </summary>
     public partial class MainWindow : Window
     {
+        private volatile UI.InfoBlock UiInfo = new UI.InfoBlock();
+        private System.Timers.Timer InfoPoll = new System.Timers.Timer() { Interval = 100 };
+        public IEnumerable <Search.FoundObject >RootItems { get; } = new Search.SearchFactory("D:\\Music").PerformSearch("");
          public MainWindow()
         {
             InitializeComponent();
@@ -31,7 +35,16 @@ namespace FileSearch
             //load contents
             WorkingFolderInfoView.Text = Properties.Settings.Default.WorkFolder;
             FileMaskInput.Text = Properties.Settings.Default.FileMask;
+            //init poll
+            InfoPoll.Elapsed += UIUpdate;
+            InfoPoll.Start();
             
+        }
+
+        private void UIUpdate(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            string CookedInfo = string.Format("Времени с запуска: {0} \nТекущая директория поиска: {1}\nПросмотрено: {2} / Найдено: {3}", "00:00", UiInfo.CurrentDirectory, UiInfo.FilesTotal, UiInfo.FilesFound);
+            InfoOutput.Dispatcher.BeginInvoke((Action)(() => InfoOutput.Text = CookedInfo));
         }
 
         private void MainView_Closing(object sender, System.ComponentModel.CancelEventArgs e)

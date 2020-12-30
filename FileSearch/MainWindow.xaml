@@ -30,8 +30,7 @@
         <GroupBox x:Name="SearchResultArea" Header="Результаты поиска" Margin="10,150,10,10" MinWidth="100" MinHeight="100" Grid.Row="2">
             <Grid>
                 <TextBlock x:Name="InfoOutput" Margin="5,5,5,0" TextWrapping="Wrap" Text="TextBlock &#x0a;kek&#x0a;pek" VerticalAlignment="Top" Height="50"/>
-                <TreeView x:Name="ResultTree" Margin="5,60,5,5"/>
-
+                <TreeView x:Name="ResultTree" Margin="5,60,5,5"></TreeView>
             </Grid>
         </GroupBox>
     </Grid>
