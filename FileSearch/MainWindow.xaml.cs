@@ -24,7 +24,7 @@ namespace FileSearch
     {
         private volatile UI.InfoBlock UiInfo = new UI.InfoBlock();
         private System.Timers.Timer InfoPoll = new System.Timers.Timer() { Interval = 100 };
-        public IEnumerable <Search.FoundObject >RootItems { get; } = new Search.SearchFactory("D:\\Music").PerformSearch("");
+        public ObservableCollection<Model.FoundObject> RootItems { get; set; }
          public MainWindow()
         {
             InitializeComponent();
@@ -39,12 +39,14 @@ namespace FileSearch
             InfoPoll.Elapsed += UIUpdate;
             InfoPoll.Start();
             
+            
         }
 
         private void UIUpdate(object sender, System.Timers.ElapsedEventArgs e)
         {
             string CookedInfo = string.Format("Времени с запуска: {0} \nТекущая директория поиска: {1}\nПросмотрено: {2} / Найдено: {3}", "00:00", UiInfo.CurrentDirectory, UiInfo.FilesTotal, UiInfo.FilesFound);
             InfoOutput.Dispatcher.BeginInvoke((Action)(() => InfoOutput.Text = CookedInfo));
+            InfoOutput.Dispatcher.BeginInvoke((Action)(() => ResultTree.ItemsSource = RootItems));
         }
 
         private void MainView_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -61,5 +63,12 @@ namespace FileSearch
             if (FolderPicker.ShowDialog() == WinForms.DialogResult.OK) Properties.Settings.Default.WorkFolder = FolderPicker.SelectedPath;
             Properties.Settings.Default.Save();
         }
-}
+
+        private void StartPauseButton_Click(object sender, RoutedEventArgs e)
+        {
+
+            RootItems = new Model.FoundObjectFactory("C:\\").PerformSearch("*.exe");
+            ResultTree.ItemsSource = RootItems;
+        }
+    }
 }

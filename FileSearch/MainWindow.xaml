@@ -22,7 +22,7 @@
                     <ColumnDefinition Width="19*"/>
                 </Grid.ColumnDefinitions>
                 <TextBox x:Name="FileMaskInput" Text="NAME_GOES_HERE" Margin="5,5,45,0" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" Height="20"/>
-                <Button x:Name="StartPauseButton" Content="Старт" HorizontalAlignment="Right" Margin="0,5,5,0" VerticalAlignment="Top" Width="75" Grid.Column="1" Grid.ColumnSpan="2"/>
+                <Button x:Name="StartPauseButton" Content="Старт" HorizontalAlignment="Right" Margin="0,5,5,0" VerticalAlignment="Top" Width="75" Grid.Column="1" Grid.ColumnSpan="2" Click="StartPauseButton_Click"/>
                 <Button x:Name="CancelButton" Content="Отмена" HorizontalAlignment="Right" Margin="0,30,5,0" VerticalAlignment="Top" Width="75" Grid.Column="1" Grid.ColumnSpan="2" IsEnabled="False"/>
             </Grid>
 
@@ -30,7 +30,13 @@
         <GroupBox x:Name="SearchResultArea" Header="Результаты поиска" Margin="10,150,10,10" MinWidth="100" MinHeight="100" Grid.Row="2">
             <Grid>
                 <TextBlock x:Name="InfoOutput" Margin="5,5,5,0" TextWrapping="Wrap" Text="TextBlock &#x0a;kek&#x0a;pek" VerticalAlignment="Top" Height="50"/>
-                <TreeView x:Name="ResultTree" Margin="5,60,5,5"></TreeView>
+                <TreeView x:Name="ResultTree" Margin="5,60,5,5">
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding Path=ChildrenList}">
+                            <TextBlock Text="{Binding Name}" />
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
             </Grid>
         </GroupBox>
     </Grid>

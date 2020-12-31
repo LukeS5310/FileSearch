@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileSearch.Search
+namespace FileSearch.Model
 {
     class FoundFile : FoundObject
     {
-        public FoundFile(string path) : base(path)
+        public FoundFile(string name) : base(name)
         {
 
         }

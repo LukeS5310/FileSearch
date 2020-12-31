@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
-namespace FileSearch.Search
+namespace FileSearch.Model
 {
     class FoundDirectory : FoundObject
     {
-        public IEnumerable<FoundObject> ChildrenList { get; }
-        public FoundDirectory(string path, string fileMask) : base(path)
+        public ObservableCollection<FoundObject> ChildrenList { get; set; }
+        public FoundDirectory(string name) : base(name)
         {
-            ChildrenList = new SearchFactory(path).PerformSearch(fileMask);
+            ChildrenList = new ObservableCollection<FoundObject>();
 
         }
     }

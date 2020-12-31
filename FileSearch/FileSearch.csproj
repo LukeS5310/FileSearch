@@ -56,10 +56,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Model\FileObject.cs" />
+    <Compile Include="Model\FoundFIle.cs" />
     <Compile Include="Model\FoundDirectory.cs" />
     <Compile Include="Model\FoundObject.cs" />
-    <Compile Include="Model\SearchFactory.cs" />
+    <Compile Include="Model\FoundObjectFactory.cs" />
+    <Compile Include="Model\SearchObjects.cs" />
     <Compile Include="UI\InfoBlock.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

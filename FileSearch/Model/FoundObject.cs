@@ -4,16 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileSearch.Search
+namespace FileSearch.Model
+
 {
     public class FoundObject
     {
         public string Name { get; }
-        public string Path { get; }
-        public FoundObject(string path)
+        public FoundObject(string name)
         {
-            this.Path = path;
-            this.Name = System.IO.Path.GetFileName(path);
+           
+            this.Name = name ;
+            
         }
     }
 }
