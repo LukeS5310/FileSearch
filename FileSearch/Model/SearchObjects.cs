@@ -17,11 +17,11 @@ namespace FileSearch.Model
             this.FileMask = fileMask;
             this.RootPath = rootPath;
         }
-        public IEnumerable<FileInfo> SearchFiles() //TODO: fix bug with searching from drive root
+        public IEnumerable<FileInfo> SearchFiles() 
         {
             var outList = new List<FileInfo>() ;
          
-                foreach (FileInfo fileEntry in new DirectoryInfo(RootPath).EnumerateFiles(FileMask,new EnumerationOptions() {IgnoreInaccessible = true }))
+                foreach (FileInfo fileEntry in new DirectoryInfo(RootPath).EnumerateFiles(FileMask,new EnumerationOptions() {IgnoreInaccessible = true, RecurseSubdirectories = true }))
                 {
                     try
                     {
@@ -33,51 +33,8 @@ namespace FileSearch.Model
                         continue;
                     }
                 }
-           
-           
-           //      outList = new DirectoryInfo(RootPath).GetFiles(FileMask, SearchOption.TopDirectoryOnly).ToList();
-                foreach (DirectoryInfo dirEntry in new DirectoryInfo(RootPath).GetDirectories())
-                {
-                    SearchFiles(outList, dirEntry.FullName);
-                }
-           
+
             return outList;
         }
-        public void SearchFiles(List<FileInfo> passList,string folderPath)
-        {
-            
-            {
-                foreach (FileInfo fileEntry in new DirectoryInfo(folderPath).EnumerateFiles(FileMask, new EnumerationOptions() { IgnoreInaccessible = true }))
-                {
-
-                    try
-                    {
-                        passList.Add(fileEntry);
-                    }
-                    catch (Exception)
-                    {
-
-                        continue;
-                    }
-                }
-                foreach (DirectoryInfo dirEntry in new DirectoryInfo(folderPath).EnumerateDirectories("*", new EnumerationOptions() { IgnoreInaccessible = true }))
-                {
-                    try
-                    {
-                        SearchFiles(passList, dirEntry.FullName);
-                    }
-                    catch (Exception)
-                    {
-
-                        continue;
-                    }
-                   
-                }
-            }
-           
-            
-
-        }
-
     }
 }
