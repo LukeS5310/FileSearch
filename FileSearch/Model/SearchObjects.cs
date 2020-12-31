@@ -19,16 +19,64 @@ namespace FileSearch.Model
         }
         public IEnumerable<FileInfo> SearchFiles() //TODO make search recursive thus allowing to skip protected folders 
         {
-            try
-            {
-                return new DirectoryInfo(RootPath).GetFiles(FileMask, SearchOption.AllDirectories);
-            }
-            catch (Exception)
-            {
+            var outList = new List<FileInfo>() ;
+         
+                foreach (FileInfo fileEntry in new DirectoryInfo(RootPath).GetFiles(FileMask, SearchOption.TopDirectoryOnly))
+                {
+                    try
+                    {
+                        outList.Add(fileEntry);
+                    }
+                    catch (Exception)
+                    {
 
-                throw;
-            }
+                        continue;
+                    }
+                }
+           
+           
+           //      outList = new DirectoryInfo(RootPath).GetFiles(FileMask, SearchOption.TopDirectoryOnly).ToList();
+                foreach (DirectoryInfo dirEntry in new DirectoryInfo(RootPath).GetDirectories())
+                {
+                    SearchFiles(outList, dirEntry.FullName);
+                }
+           
+            return outList;
+        }
+        public void SearchFiles(List<FileInfo> passList,string folderPath)
+        {
             
+            {
+                foreach (FileInfo fileEntry in new DirectoryInfo(folderPath).GetFiles(FileMask,SearchOption.TopDirectoryOnly))
+                {
+
+                    try
+                    {
+                        passList.Add(fileEntry);
+                    }
+                    catch (Exception)
+                    {
+
+                        continue;
+                    }
+                }
+                foreach (DirectoryInfo dirEntry in new DirectoryInfo(folderPath).GetDirectories())
+                {
+                    try
+                    {
+                        SearchFiles(passList, dirEntry.FullName);
+                    }
+                    catch (Exception)
+                    {
+
+                        continue;
+                    }
+                   
+                }
+            }
+           
+            
+
         }
 
     }
