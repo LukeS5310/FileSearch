@@ -17,11 +17,11 @@ namespace FileSearch.Model
             this.FileMask = fileMask;
             this.RootPath = rootPath;
         }
-        public IEnumerable<FileInfo> SearchFiles() //TODO make search recursive thus allowing to skip protected folders 
+        public IEnumerable<FileInfo> SearchFiles() //TODO: fix bug with searching from drive root
         {
             var outList = new List<FileInfo>() ;
          
-                foreach (FileInfo fileEntry in new DirectoryInfo(RootPath).GetFiles(FileMask, SearchOption.TopDirectoryOnly))
+                foreach (FileInfo fileEntry in new DirectoryInfo(RootPath).EnumerateFiles(FileMask,new EnumerationOptions() {IgnoreInaccessible = true }))
                 {
                     try
                     {
@@ -47,7 +47,7 @@ namespace FileSearch.Model
         {
             
             {
-                foreach (FileInfo fileEntry in new DirectoryInfo(folderPath).GetFiles(FileMask,SearchOption.TopDirectoryOnly))
+                foreach (FileInfo fileEntry in new DirectoryInfo(folderPath).EnumerateFiles(FileMask, new EnumerationOptions() { IgnoreInaccessible = true }))
                 {
 
                     try
@@ -60,7 +60,7 @@ namespace FileSearch.Model
                         continue;
                     }
                 }
-                foreach (DirectoryInfo dirEntry in new DirectoryInfo(folderPath).GetDirectories())
+                foreach (DirectoryInfo dirEntry in new DirectoryInfo(folderPath).EnumerateDirectories("*", new EnumerationOptions() { IgnoreInaccessible = true }))
                 {
                     try
                     {
