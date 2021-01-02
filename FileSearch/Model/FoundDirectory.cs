@@ -10,6 +10,7 @@ namespace FileSearch.Model
 {
     class FoundDirectory : FoundObject
     {
+        
         public ObservableCollection<FoundObject> ChildrenList { get; set; }
         public FoundDirectory(string name) : base(name)
         {

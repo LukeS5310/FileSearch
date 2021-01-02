@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.IO;
 using System.Collections.ObjectModel;
 
@@ -12,46 +12,73 @@ namespace FileSearch.Model
    public class FoundObjectFactory
     {
         private DirectoryInfo RootDirectory { get; }
-        public FoundObjectFactory(string RootDirectoryPath)
+        private ManualResetEvent Pauser;
+        public FoundObjectFactory(string RootDirectoryPath, ManualResetEvent pauser = null)
         {
+            this.Pauser = pauser;
             this.RootDirectory = new DirectoryInfo(RootDirectoryPath);
         }
         
-        public ObservableCollection<FoundObject> PerformSearch(string FileMask)
+        public void PerformSearchRealTime(string fileMask, ObservableCollection<FoundObject> externalTree )
         {
-            var outList = new ObservableCollection<FoundObject>();
             var rootDir = new FoundDirectory(RootDirectory.Name);
-            outList.Add(rootDir);
-            var parentDir = rootDir;
+            ProperlyUpdateNode(externalTree, rootDir);
+            System.Threading.Thread.Sleep(1000);
             
-            foreach (FileInfo file in new SearchObjects(RootDirectory.FullName,FileMask).SearchFiles())
+            FoundDirectory parentDir;
+            
+            foreach (FileInfo fileEntry in RootDirectory.EnumerateFiles(fileMask, new EnumerationOptions() {IgnoreInaccessible = true, RecurseSubdirectories = true}))
             {
-                parentDir = rootDir;
-                bool isReachedRoot = false;
-                foreach (string pathItem in file.FullName.Split('\\'))
+                try
                 {
-                    if (pathItem == RootDirectory.Name)
+                    parentDir = rootDir;
+                    bool isReachedRoot = false;
+                    foreach (string pathItem in fileEntry.FullName.Split('\\'))
                     {
-                        isReachedRoot = true;
-                        continue;
+                        if (pathItem == RootDirectory.Name.Replace("\\", string.Empty))
+                        {
+                            isReachedRoot = true;
+                            continue;
+                        }
+                        if (isReachedRoot == false) continue;
+                        if (fileEntry.Name == pathItem)
+                        {
+                            ProperlyUpdateNode(parentDir.ChildrenList, new FoundFile(pathItem));
+                           
+                            continue;
+                        }
+                        var subDir = parentDir.ChildrenList.FirstOrDefault(x => x.Name.Equals(pathItem));
+                        if (subDir == null)
+                        {
+                            subDir = new FoundDirectory(pathItem);
+                            ProperlyUpdateNode(parentDir.ChildrenList, subDir);
+                            
+                        }
+                        parentDir = (FoundDirectory)subDir;
+                        CheckPause();
                     }
-                    if (isReachedRoot == false) continue;
-                    if (file.Name == pathItem)
-                    {
-                        parentDir.ChildrenList.Add(new FoundFile(pathItem));
-                        continue;
-                    }
-                    var subDir = parentDir.ChildrenList.FirstOrDefault(x => x.Name.Equals(pathItem));
-                    if (subDir == null)
-                    {
-                        subDir = new FoundDirectory(pathItem);
-                        parentDir.ChildrenList.Add(subDir);
-                    }
-                    parentDir = (FoundDirectory)subDir;
                 }
-                
+                catch (Exception)
+                {
+
+                    continue;
+                }
             }
-            return outList;
+
         }
+        private void CheckPause()
+        {
+            Pauser?.WaitOne();
+        }
+        private static void ProperlyUpdateNode(ObservableCollection<FoundObject> targetCollection,FoundObject targetItem)
+        {
+           
+                App.Current.Dispatcher.Invoke((Action)delegate
+                {
+                    targetCollection.Add(targetItem);
+                });
+          
+        }
+
     }
 }

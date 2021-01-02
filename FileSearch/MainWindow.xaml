@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FileSearch"
+        xmlns:mdl="clr-namespace:FileSearch.Model"
         mc:Ignorable="d"
         Title="FIleSearch" Height="450" Width="300" MinWidth="300" MinHeight="450" Loaded="MainView_Loaded" Closing="MainView_Closing">
     <Grid>
@@ -23,19 +24,22 @@
                 </Grid.ColumnDefinitions>
                 <TextBox x:Name="FileMaskInput" Text="NAME_GOES_HERE" Margin="5,5,45,0" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" Height="20"/>
                 <Button x:Name="StartPauseButton" Content="Старт" HorizontalAlignment="Right" Margin="0,5,5,0" VerticalAlignment="Top" Width="75" Grid.Column="1" Grid.ColumnSpan="2" Click="StartPauseButton_Click"/>
-                <Button x:Name="CancelButton" Content="Отмена" HorizontalAlignment="Right" Margin="0,30,5,0" VerticalAlignment="Top" Width="75" Grid.Column="1" Grid.ColumnSpan="2" IsEnabled="False"/>
+                <Button x:Name="CancelButton" Content="Отмена" HorizontalAlignment="Right" Margin="0,30,5,0" VerticalAlignment="Top" Width="75" Grid.Column="1" Grid.ColumnSpan="2" IsEnabled="False" Click="CancelButton_Click"/>
             </Grid>
 
         </GroupBox>
         <GroupBox x:Name="SearchResultArea" Header="Результаты поиска" Margin="10,150,10,10" MinWidth="100" MinHeight="100" Grid.Row="2">
             <Grid>
                 <TextBlock x:Name="InfoOutput" Margin="5,5,5,0" TextWrapping="Wrap" Text="TextBlock &#x0a;kek&#x0a;pek" VerticalAlignment="Top" Height="50"/>
-                <TreeView x:Name="ResultTree" Margin="5,60,5,5">
-                    <TreeView.ItemTemplate>
-                        <HierarchicalDataTemplate ItemsSource="{Binding Path=ChildrenList}">
-                            <TextBlock Text="{Binding Name}" />
+                <TreeView x:Name="ResultTree" Margin="5,60,5,5" DataContext="{x:Type local:MainWindow}" ItemsSource="{x:Static local:MainWindow.RootItems}">
+                    <TreeView.Resources>
+                        <HierarchicalDataTemplate DataType="{x:Type mdl:FoundDirectory}" ItemsSource="{Binding Path=ChildrenList}">
+                            <TextBlock Text="{Binding Path=Name}"/>
                         </HierarchicalDataTemplate>
-                    </TreeView.ItemTemplate>
+                        <DataTemplate DataType="{x:Type mdl:FoundFile}">
+                            <TextBlock Text="{Binding Path=Name}" />
+                        </DataTemplate>
+                    </TreeView.Resources>
                 </TreeView>
             </Grid>
         </GroupBox>
