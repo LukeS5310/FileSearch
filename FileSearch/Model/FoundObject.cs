@@ -9,7 +9,6 @@ using System.Runtime.CompilerServices;
 using System.Collections.Specialized;
 
 namespace FileSearch.Model
-
 {
     public class FoundObject
     {
